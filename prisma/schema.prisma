@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  CLIENT
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  phone     String?  @unique
+  password  String
+  role      UserRole @default(CLIENT)
+
+  firstName   String  @map("first_name")
+  lastName    String  @map("last_name")
+  companyName String? @map("company_name")
+
+  emailVerified DateTime? @map("email_verified")
+  orders        Order[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  icon        String?
+  sortOrder   Int     @default(0) @map("sort_order")
+
+  equipment Equipment[]
+
+  @@map("categories")
+}
+
+enum EquipmentStatus {
+  AVAILABLE
+  RENTED
+  MAINTENANCE
+  UNAVAILABLE
+}
+
+model Equipment {
+  id         String @id @default(cuid())
+  categoryId String @map("category_id")
+
+  name        String
+  slug        String  @unique
+  description String  @db.Text
+
+  images        String[]
+  pricePerDay   Decimal  @map("price_per_day") @db.Decimal(10, 2)
+  pricePerWeek  Decimal? @map("price_per_week") @db.Decimal(10, 2)
+  pricePerMonth Decimal? @map("price_per_month") @db.Decimal(10, 2)
+
+  specifications Json @default("{}")
+
+  manufacturer String?
+  model        String?
+  year         Int?
+  location     String?
+
+  status EquipmentStatus @default(AVAILABLE)
+
+  category Category    @relation(fields: [categoryId], references: [id])
+  items    OrderItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([pricePerDay])
+  @@map("equipments")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+
+  contactPhone String? @map("contact_phone")
+  comment      String? @db.Text
+
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal     @map("total_amount") @db.Decimal(10, 2)
+
+  startDate DateTime @map("start_date")
+  endDate   DateTime @map("end_date")
+
+  user  User        @relation(fields: [userId], references: [id])
+  items OrderItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([status])
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String @id @default(cuid())
+  orderId     String @map("order_id")
+  equipmentId String @map("equipment_id")
+
+  quantity Int     @default(1)
+  price    Decimal @db.Decimal(10, 2)
+
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  equipment Equipment @relation(fields: [equipmentId], references: [id])
+
+  @@map("order_items")
+}
