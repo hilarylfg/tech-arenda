@@ -1,4 +1,5 @@
 export const runtime = 'nodejs'
+
 import { prisma } from '@/lib/prisma'
 import { registerSchema } from '@/lib/validations/auth'
 import bcrypt from 'bcryptjs'
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
 			data: {
 				email,
 				phone,
-				passwordHash,
+				password,
 				firstName,
 				lastName,
 				companyName: companyName || null,

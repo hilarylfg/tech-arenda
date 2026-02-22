@@ -1,8 +1,6 @@
 export const runtime = 'nodejs'
+
 import { auth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { updateProfileSchema } from '@/lib/validations/auth'
-import { NextRequest, NextResponse } from 'next/server'
 
 export async function PATCH(req: NextRequest) {
 	try {

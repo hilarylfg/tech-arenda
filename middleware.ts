@@ -1,35 +1,33 @@
-import { auth } from '@/lib/auth'
+/**
+ * Middleware — runs in Edge runtime.
+ * Uses only Edge-safe authConfig (no Prisma, no bcrypt, no Node.js modules).
+ */
+import { authConfig } from '@/auth.config'
+import NextAuth from 'next-auth'
 import { NextResponse } from 'next/server'
 
-/**
- * Middleware для защиты маршрутов.
- * Проверяет JWT токен и перенаправляет незарегистрированных пользователей.
- */
+const { auth } = NextAuth(authConfig)
+
 export default auth(req => {
 	const { nextUrl, auth: session } = req
 	const isLoggedIn = !!session?.user
 
-	// Маршруты, требующие авторизации
 	const isProtectedRoute =
 		nextUrl.pathname.startsWith('/dashboard') ||
 		nextUrl.pathname.startsWith('/api/orders')
 
-	// Маршруты только для администраторов
 	const isAdminRoute =
 		nextUrl.pathname.startsWith('/admin') ||
 		nextUrl.pathname.startsWith('/api/admin')
 
-	// Страницы аутентификации (редиректим если уже залогинен)
 	const isAuthRoute =
 		nextUrl.pathname.startsWith('/login') ||
 		nextUrl.pathname.startsWith('/register')
 
-	// Уже авторизованный пользователь пытается зайти на страницу входа
 	if (isAuthRoute && isLoggedIn) {
 		return NextResponse.redirect(new URL('/dashboard', nextUrl))
 	}
 
-	// Незарегистрированный пользователь пытается получить доступ к защищенному маршруту
 	if (isProtectedRoute && !isLoggedIn) {
 		const callbackUrl = encodeURIComponent(nextUrl.pathname)
 		return NextResponse.redirect(
@@ -37,7 +35,6 @@ export default auth(req => {
 		)
 	}
 
-	// Проверка прав администратора
 	if (isAdminRoute) {
 		if (!isLoggedIn) {
 			return NextResponse.redirect(new URL('/login', nextUrl))
@@ -51,7 +48,6 @@ export default auth(req => {
 })
 
 export const config = {
-	// Middleware применяется ко всем маршрутам кроме статики и API Next.js
 	matcher: [
 		'/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'
 	]

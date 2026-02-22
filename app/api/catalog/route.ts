@@ -1,4 +1,3 @@
-export const runtime = 'nodejs'
 import { prisma } from '@/lib/prisma'
 import { catalogFiltersSchema } from '@/lib/validations/equipment'
 import type { Prisma } from '@prisma/client'

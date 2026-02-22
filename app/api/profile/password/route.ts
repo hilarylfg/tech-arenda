@@ -1,4 +1,5 @@
 export const runtime = 'nodejs'
+
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { changePasswordSchema } from '@/lib/validations/auth'
