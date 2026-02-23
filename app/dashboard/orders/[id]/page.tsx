@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatDate, formatPrice } from '@/lib/utils'
 import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from '@/types'
@@ -12,8 +12,8 @@ export default async function OrderDetailPage({
 }: {
 	params: Promise<{ id: string }>
 }) {
-	const session = await auth()
-	if (!session?.user?.id) redirect('/login')
+	const session = await getSession()
+	if (!session?.id) redirect('/login')
 
 	const { id } = await params
 
@@ -37,7 +37,7 @@ export default async function OrderDetailPage({
 		}
 	})
 
-	if (!order || order.userId !== session.user.id) notFound()
+	if (!order || order.userId !== session.id) notFound()
 
 	const statusColor =
 		ORDER_STATUS_COLORS[order.status as keyof typeof ORDER_STATUS_COLORS] ??

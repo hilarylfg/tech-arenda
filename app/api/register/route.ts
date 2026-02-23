@@ -68,11 +68,10 @@ export async function POST(req: NextRequest) {
 			data: {
 				email,
 				phone,
-				password,
+				password: passwordHash,
 				firstName,
 				lastName,
 				companyName: companyName || null,
-				inn: inn || null,
 				role: 'CLIENT'
 			},
 			select: {

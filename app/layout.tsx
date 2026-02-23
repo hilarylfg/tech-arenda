@@ -1,7 +1,7 @@
 import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
+import { SessionProvider } from '@/lib/session-context'
 import type { Metadata } from 'next'
-import { SessionProvider } from 'next-auth/react'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 

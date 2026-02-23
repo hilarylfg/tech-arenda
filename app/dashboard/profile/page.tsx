@@ -2,10 +2,10 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useSession } from '@/lib/session-context'
 import { updateProfileSchema } from '@/lib/validations/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
@@ -13,7 +13,7 @@ import type { z } from 'zod'
 type FormData = z.infer<typeof updateProfileSchema>
 
 export default function ProfilePage() {
-	const { data: session, update } = useSession()
+	const { user: session, refresh } = useSession()
 	const [status, setStatus] = useState<
 		'idle' | 'loading' | 'success' | 'error'
 	>('idle')
@@ -26,9 +26,9 @@ export default function ProfilePage() {
 	} = useForm<FormData>({
 		resolver: zodResolver(updateProfileSchema),
 		defaultValues: {
-			firstName: (session?.user as any)?.firstName ?? '',
-			lastName: (session?.user as any)?.lastName ?? '',
-			phone: (session?.user as any)?.phone ?? ''
+			firstName: session?.firstName ?? '',
+			lastName: session?.lastName ?? '',
+			phone: (session as any)?.phone ?? ''
 		}
 	})
 
@@ -43,7 +43,7 @@ export default function ProfilePage() {
 			})
 			const json = await res.json()
 			if (!res.ok) throw new Error(json.error ?? 'Ошибка сохранения')
-			await update({ ...session, user: { ...session?.user, ...data } })
+			await refresh()
 			setStatus('success')
 		} catch (e: any) {
 			setErrorMsg(e.message)
@@ -88,7 +88,7 @@ export default function ProfilePage() {
 						</label>
 						<input
 							type='email'
-							value={session?.user?.email ?? ''}
+							value={session?.email ?? ''}
 							disabled
 							className='w-full px-3 py-2 border border-stone-200 rounded-lg bg-stone-50 text-stone-400 text-sm'
 						/>

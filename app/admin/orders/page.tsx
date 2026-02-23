@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatDate, formatPrice } from '@/lib/utils'
 import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from '@/types'
@@ -6,8 +6,8 @@ import { redirect } from 'next/navigation'
 import AdminOrderStatusSelect from './AdminOrderStatusSelect'
 
 export default async function AdminOrdersPage() {
-	const session = await auth()
-	if (session?.user?.role !== 'ADMIN') redirect('/dashboard')
+	const session = await getSession()
+	if (session?.role !== 'ADMIN') redirect('/dashboard')
 
 	const orders = await prisma.order.findMany({
 		orderBy: { createdAt: 'desc' },

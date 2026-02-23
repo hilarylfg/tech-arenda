@@ -1,16 +1,15 @@
 /**
- * Middleware — runs in Edge runtime.
- * Uses only Edge-safe authConfig (no Prisma, no bcrypt, no Node.js modules).
+ * Middleware — Edge runtime.
+ * Использует только jose (Edge-safe), без next-auth, без Prisma, без Node.js модулей.
  */
-import { authConfig } from '@/auth.config'
-import NextAuth from 'next-auth'
-import { NextResponse } from 'next/server'
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/session'
+import { type NextRequest, NextResponse } from 'next/server'
 
-const { auth } = NextAuth(authConfig)
-
-export default auth(req => {
-	const { nextUrl, auth: session } = req
-	const isLoggedIn = !!session?.user
+export async function middleware(req: NextRequest) {
+	const { nextUrl } = req
+	const token = req.cookies.get(SESSION_COOKIE)?.value
+	const session = token ? await verifySessionToken(token) : null
+	const isLoggedIn = !!session
 
 	const isProtectedRoute =
 		nextUrl.pathname.startsWith('/dashboard') ||
@@ -39,16 +38,17 @@ export default auth(req => {
 		if (!isLoggedIn) {
 			return NextResponse.redirect(new URL('/login', nextUrl))
 		}
-		if (session?.user?.role !== 'ADMIN') {
+		if (session?.role !== 'ADMIN') {
 			return NextResponse.redirect(new URL('/dashboard', nextUrl))
 		}
 	}
 
 	return NextResponse.next()
-})
+}
 
 export const config = {
 	matcher: [
-		'/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'
+		// Исключаем статику, изображения и публичные маршруты
+		'/((?!api/auth|api/register|api/catalog|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'
 	]
 }

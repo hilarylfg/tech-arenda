@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { ChevronRight, ShieldAlert } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -14,9 +14,9 @@ export default async function AdminLayout({
 }: {
 	children: React.ReactNode
 }) {
-	const session = await auth()
-	if (!session?.user) redirect('/login')
-	if (session.user.role !== 'ADMIN') {
+	const session = await getSession()
+	if (!session) redirect('/login')
+	if (session.role !== 'ADMIN') {
 		return (
 			<div className='min-h-screen bg-stone-50 flex items-center justify-center px-4'>
 				<div className='text-center'>

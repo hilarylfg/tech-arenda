@@ -1,12 +1,12 @@
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { ClipboardList, TrendingUp, Truck, Users } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
 export default async function AdminDashboardPage() {
-	const session = await auth()
-	if (session?.user?.role !== 'ADMIN') redirect('/dashboard')
+	const session = await getSession()
+	if (session?.role !== 'ADMIN') redirect('/dashboard')
 
 	const [
 		totalEquipment,

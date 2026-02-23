@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { useSession } from '@/lib/session-context'
 import { cn } from '@/lib/utils'
 import {
 	ChevronDown,
@@ -12,8 +13,8 @@ import {
 	User,
 	X
 } from 'lucide-react'
-import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const navLinks = [
@@ -23,11 +24,18 @@ const navLinks = [
 ]
 
 export function Header() {
-	const { data: session } = useSession()
+	const { user: session } = useSession()
+	const router = useRouter()
 	const [mobileOpen, setMobileOpen] = useState(false)
 	const [userMenuOpen, setUserMenuOpen] = useState(false)
 
-	const isAdmin = session?.user?.role === 'ADMIN'
+	const isAdmin = session?.role === 'ADMIN'
+
+	const handleSignOut = async () => {
+		await fetch('/api/auth/logout', { method: 'POST' })
+		router.push('/')
+		router.refresh()
+	}
 
 	return (
 		<header className='sticky top-0 z-50 w-full border-b border-stone-200 bg-white/95 backdrop-blur-sm shadow-sm'>
@@ -57,7 +65,7 @@ export function Header() {
 
 					{/* Правая часть */}
 					<div className='flex items-center gap-3'>
-						{session?.user ? (
+						{session ? (
 							// Пользовательское меню
 							<div className='relative hidden md:block'>
 								<button
@@ -67,12 +75,11 @@ export function Header() {
 									className='flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 transition-colors'
 								>
 									<div className='h-8 w-8 rounded-full bg-amber-500 flex items-center justify-center text-white text-sm font-bold'>
-										{session.user.firstName?.[0]}
-										{session.user.lastName?.[0]}
+										{session?.firstName?.[0]}
+										{session?.lastName?.[0]}
 									</div>
 									<span className='max-w-32 truncate'>
-										{session.user.firstName}{' '}
-										{session.user.lastName}
+										{session?.firstName} {session?.lastName}
 									</span>
 									<ChevronDown
 										className={cn(
@@ -91,11 +98,11 @@ export function Header() {
 									>
 										<div className='px-4 py-2 border-b border-stone-100'>
 											<p className='text-sm font-medium text-stone-900'>
-												{session.user.firstName}{' '}
-												{session.user.lastName}
+												{session?.firstName}{' '}
+												{session?.lastName}
 											</p>
 											<p className='text-xs text-stone-500'>
-												{session.user.email}
+												{session?.email}
 											</p>
 										</div>
 										<Link
@@ -122,11 +129,7 @@ export function Header() {
 										)}
 										<div className='border-t border-stone-100 mt-1 pt-1'>
 											<button
-												onClick={() =>
-													signOut({
-														callbackUrl: '/'
-													})
-												}
+												onClick={handleSignOut}
 												className='flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50'
 											>
 												<LogOut className='h-4 w-4' />
@@ -184,7 +187,7 @@ export function Header() {
 						</Link>
 					))}
 					<div className='border-t border-stone-100 pt-2 mt-2'>
-						{session?.user ? (
+						{session ? (
 							<div className='space-y-1'>
 								<Link
 									href='/dashboard'
@@ -192,8 +195,7 @@ export function Header() {
 									onClick={() => setMobileOpen(false)}
 								>
 									<User className='h-4 w-4' />
-									{session.user.firstName}{' '}
-									{session.user.lastName}
+									{session?.firstName} {session?.lastName}
 								</Link>
 								{isAdmin && (
 									<Link
@@ -206,9 +208,7 @@ export function Header() {
 									</Link>
 								)}
 								<button
-									onClick={() =>
-										signOut({ callbackUrl: '/' })
-									}
+									onClick={handleSignOut}
 									className='flex items-center gap-2 py-2 text-sm text-red-600'
 								>
 									<LogOut className='h-4 w-4' />
@@ -240,3 +240,5 @@ export function Header() {
 		</header>
 	)
 }
+
+

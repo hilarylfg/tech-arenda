@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input'
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, UserPlus } from 'lucide-react'
-import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -44,13 +43,16 @@ export function RegisterForm() {
 			}
 
 			// Автоматически входим после регистрации
-			const signInResult = await signIn('credentials', {
-				email: data.email,
-				password: data.password,
-				redirect: false
+			const loginRes = await fetch('/api/auth/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					email: data.email,
+					password: data.password
+				})
 			})
 
-			if (signInResult?.error) {
+			if (!loginRes.ok) {
 				// Если вход не удался — перенаправляем на страницу входа
 				router.push('/login?registered=1')
 				return

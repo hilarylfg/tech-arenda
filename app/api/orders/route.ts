@@ -1,5 +1,5 @@
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/session'
 import { createOrderSchema } from '@/lib/validations/order'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -9,8 +9,8 @@ import { NextRequest, NextResponse } from 'next/server'
  */
 export async function GET(_req: NextRequest) {
 	try {
-		const session = await auth()
-		if (!session?.user?.id) {
+		const session = await getSession()
+		if (!session?.id) {
 			return NextResponse.json(
 				{ success: false, error: 'Необходима авторизация' },
 				{ status: 401 }
@@ -18,7 +18,7 @@ export async function GET(_req: NextRequest) {
 		}
 
 		const orders = await prisma.order.findMany({
-			where: { userId: session.user.id },
+			where: { userId: session.id },
 			include: {
 				items: {
 					include: {
@@ -53,8 +53,8 @@ export async function GET(_req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
 	try {
-		const session = await auth()
-		if (!session?.user?.id) {
+		const session = await getSession()
+		if (!session?.id) {
 			return NextResponse.json(
 				{ success: false, error: 'Необходима авторизация' },
 				{ status: 401 }
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
 
 		// Получаем данные пользователя
 		const user = await prisma.user.findUnique({
-			where: { id: session.user.id }
+			where: { id: session.id }
 		})
 
 		if (!user) {
@@ -145,21 +145,18 @@ export async function POST(req: NextRequest) {
 		// Создаем заявку в транзакции
 		const order = await prisma.order.create({
 			data: {
-				userId: session.user.id,
-				contactName: `${user.firstName} ${user.lastName}`,
+				userId: session.id,
 				contactPhone: user.phone,
-				contactEmail: user.email,
 				totalAmount: subtotal,
 				comment: comment || null,
 				status: 'PENDING',
+				startDate: start,
+				endDate: end,
 				items: {
 					create: {
 						equipmentId,
-						startDate: start,
-						endDate: end,
-						pricePerDay,
-						daysCount,
-						subtotal
+						price: pricePerDay,
+						quantity: daysCount
 					}
 				}
 			},

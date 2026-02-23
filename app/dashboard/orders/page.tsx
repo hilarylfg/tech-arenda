@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatDate, formatPrice } from '@/lib/utils'
 import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from '@/types'
@@ -8,11 +8,11 @@ import { redirect } from 'next/navigation'
 import OrderCancelButton from './OrderCancelButton'
 
 export default async function OrdersPage() {
-	const session = await auth()
-	if (!session?.user?.id) redirect('/login')
+	const session = await getSession()
+	if (!session?.id) redirect('/login')
 
 	const orders = await prisma.order.findMany({
-		where: { userId: session.user.id },
+		where: { userId: session.id },
 		orderBy: { createdAt: 'desc' },
 		include: {
 			items: {

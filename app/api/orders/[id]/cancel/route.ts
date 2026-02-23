@@ -1,5 +1,5 @@
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/session'
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
@@ -11,8 +11,8 @@ export async function POST(
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
-		const session = await auth()
-		if (!session?.user?.id) {
+		const session = await getSession()
+		if (!session?.id) {
 			return NextResponse.json(
 				{ success: false, error: 'Необходима авторизация' },
 				{ status: 401 }
@@ -33,7 +33,7 @@ export async function POST(
 		}
 
 		// Проверяем владельца
-		if (order.userId !== session.user.id) {
+		if (order.userId !== session.id) {
 			return NextResponse.json(
 				{ success: false, error: 'Доступ запрещён' },
 				{ status: 403 }

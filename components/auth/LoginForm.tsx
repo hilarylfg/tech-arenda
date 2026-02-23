@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
-import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
@@ -29,20 +28,21 @@ export function LoginForm() {
 
 	const onSubmit = async (data: LoginInput) => {
 		setAuthError('')
-
-		const result = await signIn('credentials', {
-			email: data.email,
-			password: data.password,
-			redirect: false
-		})
-
-		if (result?.error) {
-			setAuthError('Неверный email или пароль')
-			return
+		try {
+			const res = await fetch('/api/auth/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(data)
+			})
+			if (!res.ok) {
+				setAuthError('Неверный email или пароль')
+				return
+			}
+			router.push(callbackUrl)
+			router.refresh()
+		} catch {
+			setAuthError('Ошибка сети. Попробуйте ещё раз')
 		}
-
-		router.push(callbackUrl)
-		router.refresh()
 	}
 
 	return (

@@ -1,7 +1,7 @@
 import { OrderForm } from '@/components/catalog/OrderForm'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { EQUIPMENT_STATUS_LABELS } from '@/types'
@@ -46,7 +46,7 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
 			where: { OR: [{ id }, { slug: id }] },
 			include: { category: true }
 		}),
-		auth()
+		getSession()
 	])
 
 	if (!equipment) notFound()
@@ -287,10 +287,10 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
 
 							{/* Форма заказа или CTA */}
 							{isAvailable ? (
-								session?.user ? (
+								session ? (
 									<OrderForm
 										equipment={equipment}
-										userId={session.user.id}
+										userId={session.id}
 									/>
 								) : (
 									<div className='space-y-3'>

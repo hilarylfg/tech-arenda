@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -10,8 +10,8 @@ export default async function EditEquipmentPage({
 }: {
 	params: Promise<{ id: string }>
 }) {
-	const session = await auth()
-	if (session?.user?.role !== 'ADMIN') redirect('/dashboard')
+	const session = await getSession()
+	if (session?.role !== 'ADMIN') redirect('/dashboard')
 
 	const { id } = await params
 	const [equipment, categories] = await Promise.all([

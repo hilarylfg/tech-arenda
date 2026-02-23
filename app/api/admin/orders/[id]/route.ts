@@ -1,11 +1,11 @@
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/session'
 import { updateOrderStatusSchema } from '@/lib/validations/order'
 import { NextRequest, NextResponse } from 'next/server'
 
 async function checkAdmin() {
-	const session = await auth()
-	if (!session?.user?.id || session.user.role !== 'ADMIN') return null
+	const session = await getSession()
+	if (!session?.id || session.role !== 'ADMIN') return null
 	return session
 }
 

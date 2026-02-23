@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -6,8 +6,8 @@ import { redirect } from 'next/navigation'
 import EquipmentForm from '../EquipmentForm'
 
 export default async function NewEquipmentPage() {
-	const session = await auth()
-	if (session?.user?.role !== 'ADMIN') redirect('/dashboard')
+	const session = await getSession()
+	if (session?.role !== 'ADMIN') redirect('/dashboard')
 
 	const categories = await prisma.category.findMany({
 		orderBy: { name: 'asc' }

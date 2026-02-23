@@ -1,12 +1,11 @@
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/session'
 import { createEquipmentSchema } from '@/lib/validations/equipment'
 import { NextRequest, NextResponse } from 'next/server'
 
-/** Проверка прав администратора */
 async function checkAdmin() {
-	const session = await auth()
-	if (!session?.user?.id || session.user.role !== 'ADMIN') {
+	const session = await getSession()
+	if (!session?.id || session.role !== 'ADMIN') {
 		return null
 	}
 	return session
