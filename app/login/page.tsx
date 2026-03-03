@@ -16,13 +16,6 @@ export default function LoginPage() {
 			<div className='w-full max-w-md'>
 				{/* Логотип */}
 				<div className='text-center mb-8'>
-					<Link
-						href='/'
-						className='inline-flex items-center gap-2 font-bold text-2xl text-stone-900'
-					>
-						<Truck className='h-7 w-7 text-amber-500' />
-						СпецТехАренда
-					</Link>
 					<h1 className='mt-4 text-2xl font-bold text-stone-900'>
 						Вход в систему
 					</h1>

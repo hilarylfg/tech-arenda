@@ -117,7 +117,7 @@ export function Header() {
 										</Link>
 										{isAdmin && (
 											<Link
-												href='/admin/dashboard'
+												href='/admin'
 												className='flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:bg-amber-50'
 												onClick={() =>
 													setUserMenuOpen(false)
@@ -199,7 +199,7 @@ export function Header() {
 								</Link>
 								{isAdmin && (
 									<Link
-										href='/admin/dashboard'
+										href='/admin'
 										className='flex items-center gap-2 py-2 text-sm text-amber-600'
 										onClick={() => setMobileOpen(false)}
 									>

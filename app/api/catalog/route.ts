@@ -13,19 +13,20 @@ export async function GET(req: NextRequest) {
 
 		// Парсим и валидируем параметры запроса
 		const params = catalogFiltersSchema.safeParse({
-			categoryId: searchParams.get('categoryId'),
-			status: searchParams.get('status'),
-			minPrice: searchParams.get('minPrice'),
-			maxPrice: searchParams.get('maxPrice'),
-			search: searchParams.get('search'),
-			sortBy: searchParams.get('sortBy'),
-			page: searchParams.get('page'),
-			pageSize: searchParams.get('pageSize')
+			categoryId: searchParams.get('categoryId') ?? undefined,
+			status: searchParams.get('status') ?? undefined,
+			minPrice: searchParams.get('minPrice') ?? undefined,
+			maxPrice: searchParams.get('maxPrice') ?? undefined,
+			search: searchParams.get('search') ?? undefined,
+			sortBy: searchParams.get('sortBy') ?? undefined,
+			page: searchParams.get('page') ?? undefined,
+			pageSize: searchParams.get('pageSize') ?? undefined
 		})
 
 		if (!params.success) {
+			console.error('[CATALOG] Ошибка валидации:', params.error.flatten())
 			return NextResponse.json(
-				{ success: false, error: 'Некорректные параметры запроса' },
+				{ success: false, error: 'Некорректные параметры запроса', details: params.error.flatten() },
 				{ status: 400 }
 			)
 		}
@@ -64,8 +65,7 @@ export async function GET(req: NextRequest) {
 		if (search) {
 			where.OR = [
 				{ name: { contains: search, mode: 'insensitive' } },
-				{ description: { contains: search, mode: 'insensitive' } },
-				{ shortDescription: { contains: search, mode: 'insensitive' } }
+				{ description: { contains: search, mode: 'insensitive' } }
 			]
 		}
 

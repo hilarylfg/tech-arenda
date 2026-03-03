@@ -1,17 +1,13 @@
-import { z } from "zod";
-
+import { z } from 'zod'
 export const createOrderSchema = z.object({
-  equipmentId: z.string().min(1, "Выберите технику"),
-  startDate: z.string().min(1, "Укажите дату начала аренды"),
-  endDate: z.string().min(1, "Укажите дату окончания аренды"),
-  comment: z.string().max(1000, "Комментарий слишком длинный").optional(),
-});
-
-export type CreateOrderInput = z.infer<typeof createOrderSchema>;
-
+    equipmentId: z.string().min(1, 'Р’С‹Р±РµСЂРёС‚Рµ С‚РµС…РЅРёРєСѓ'),
+    startDate: z.string().min(1, 'РЈРєР°Р¶РёС‚Рµ РґР°С‚Сѓ РЅР°С‡Р°Р»Р° Р°СЂРµРЅРґС‹'),
+    endDate: z.string().min(1, 'РЈРєР°Р¶РёС‚Рµ РґР°С‚Сѓ РѕРєРѕРЅС‡Р°РЅРёСЏ Р°СЂРµРЅРґС‹'),
+    comment: z.string().max(1000, 'РљРѕРјРјРµРЅС‚Р°СЂРёР№ СЃР»РёС€РєРѕРј РґР»РёРЅРЅС‹Р№').optional()
+})
+export type CreateOrderInput = z.infer<typeof createOrderSchema>
 export const updateOrderStatusSchema = z.object({
-  status: z.enum(["PENDING", "CONFIRMED", "ACTIVE", "COMPLETED", "CANCELLED"]),
-  comment: z.string().max(500).optional(),
-});
-
-export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
+    status: z.enum(['PENDING', 'CONFIRMED', 'ACTIVE', 'COMPLETED', 'CANCELLED']),
+    comment: z.string().max(500).optional()
+})
+export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>

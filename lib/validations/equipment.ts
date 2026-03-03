@@ -79,14 +79,26 @@ export const catalogFiltersSchema = z.object({
 	status: z
 		.enum(['AVAILABLE', 'RENTED', 'MAINTENANCE', 'UNAVAILABLE'])
 		.optional(),
-	minPrice: z.coerce.number().optional(),
-	maxPrice: z.coerce.number().optional(),
+	minPrice: z.preprocess(
+		(val) => (val === undefined || val === '' ? undefined : Number(val)),
+		z.number().optional()
+	),
+	maxPrice: z.preprocess(
+		(val) => (val === undefined || val === '' ? undefined : Number(val)),
+		z.number().optional()
+	),
 	search: z.string().optional(),
 	sortBy: z
 		.enum(['priceAsc', 'priceDesc', 'nameAsc', 'nameDesc'])
 		.default('nameAsc'),
-	page: z.coerce.number().int().min(1).default(1),
-	pageSize: z.coerce.number().int().min(1).max(50).default(12)
+	page: z.preprocess(
+		(val) => (val === undefined || val === '' ? 1 : Number(val)),
+		z.number().int().min(1).default(1)
+	),
+	pageSize: z.preprocess(
+		(val) => (val === undefined || val === '' ? 12 : Number(val)),
+		z.number().int().min(1).max(50).default(12)
+	)
 })
 
 export type CatalogFiltersInput = z.infer<typeof catalogFiltersSchema>
