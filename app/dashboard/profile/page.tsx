@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useSession } from '@/lib/session-context'
 import { updateProfileSchema } from '@/lib/validations/auth'
+import type { SessionUser } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
@@ -13,7 +14,7 @@ import type { z } from 'zod'
 type FormData = z.infer<typeof updateProfileSchema>
 
 export default function ProfilePage() {
-	const { user: session, refresh } = useSession()
+	const { user: session, status: sessionStatus, refresh } = useSession()
 	const [status, setStatus] = useState<
 		'idle' | 'loading' | 'success' | 'error'
 	>('idle')
@@ -28,7 +29,7 @@ export default function ProfilePage() {
 		defaultValues: {
 			firstName: session?.firstName ?? '',
 			lastName: session?.lastName ?? '',
-			phone: (session as any)?.phone ?? ''
+			phone: (session as SessionUser & { phone?: string })?.phone ?? ''
 		}
 	})
 
@@ -45,10 +46,28 @@ export default function ProfilePage() {
 			if (!res.ok) throw new Error(json.error ?? 'Ошибка сохранения')
 			await refresh()
 			setStatus('success')
-		} catch (e: any) {
-			setErrorMsg(e.message)
+		} catch (e: unknown) {
+			setErrorMsg(e instanceof Error ? e.message : 'Ошибка сохранения')
 			setStatus('error')
 		}
+	}
+
+	if (sessionStatus === 'loading') {
+		return (
+			<div className='space-y-5'>
+				<div className='bg-white rounded-xl border border-stone-200 p-6'>
+					<div className='animate-pulse space-y-4'>
+						<div className='h-5 w-32 bg-stone-200 rounded' />
+						<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+							<div className='h-10 bg-stone-100 rounded-lg' />
+							<div className='h-10 bg-stone-100 rounded-lg' />
+						</div>
+						<div className='h-10 bg-stone-100 rounded-lg' />
+						<div className='h-10 bg-stone-100 rounded-lg' />
+					</div>
+				</div>
+			</div>
+		)
 	}
 
 	return (
@@ -170,8 +189,8 @@ function ChangePasswordForm() {
 				newPassword: '',
 				confirmPassword: ''
 			})
-		} catch (e: any) {
-			setErrorMsg(e.message)
+		} catch (e: unknown) {
+			setErrorMsg(e instanceof Error ? e.message : 'Ошибка смены пароля')
 			setStatus('error')
 		}
 	}

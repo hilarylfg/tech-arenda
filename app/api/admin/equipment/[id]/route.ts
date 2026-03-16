@@ -41,12 +41,17 @@ export async function PATCH(
 			)
 		}
 
+		const { categoryId, specifications, ...rest } = validated.data
+
 		const equipment = await prisma.equipment.update({
 			where: { id },
 			data: {
-				...validated.data,
-				specifications: validated.data.specifications
-					? (validated.data.specifications as Record<string, string>)
+				...rest,
+				...(categoryId
+					? { category: { connect: { id: categoryId } } }
+					: {}),
+				specifications: specifications
+					? (specifications as Record<string, string>)
 					: undefined
 			},
 			include: { category: true }

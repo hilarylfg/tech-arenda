@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 	const session = await checkAdmin()
 	if (!session) {
 		return NextResponse.json(
-			{ success: false, error: '������ ��������' },
+			{ success: false, error: 'Доступ запрещён' },
 			{ status: 403 }
 		)
 	}
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
 	} catch (error) {
 		console.error('[ADMIN/ORDERS GET]:', error)
 		return NextResponse.json(
-			{ success: false, error: '���������� ������ �������' },
+			{ success: false, error: 'Внутренняя ошибка сервера' },
 			{ status: 500 }
 		)
 	}

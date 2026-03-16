@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { generateSlug } from '@/lib/utils'
 import { createEquipmentSchema } from '@/lib/validations/equipment'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -41,15 +42,26 @@ export default function EquipmentForm({
 	const {
 		register,
 		handleSubmit,
+		setValue,
+		watch,
 		formState: { errors, isSubmitting }
 	} = useForm<FormData>({
 		resolver: zodResolver(createEquipmentSchema),
 		defaultValues: defaultValues ?? {
 			status: 'AVAILABLE',
 			images: [],
-			specifications: {}
+			specifications: {},
+			minRentHours: 4
 		}
 	})
+
+	const nameValue = watch('name')
+
+	function handleGenerateSlug() {
+		if (nameValue) {
+			setValue('slug', generateSlug(nameValue), { shouldValidate: true })
+		}
+	}
 
 	async function onSubmit(data: FormData) {
 		setError('')
@@ -85,14 +97,40 @@ export default function EquipmentForm({
 				</div>
 				<div className='px-5 py-4 space-y-4'>
 					<Input
-						label='Название *'
+						label='Название'
 						placeholder='Экскаватор Caterpillar 320'
 						{...register('name')}
+						required
 						error={errors.name?.message}
 					/>
 					<div>
 						<label className='block text-sm font-medium text-stone-700 mb-1'>
-							Категория *
+							Slug (URL-имя){' '}
+							<span className='text-red-500'>*</span>
+						</label>
+						<div className='flex gap-2'>
+							<input
+								{...register('slug')}
+								placeholder='excavator-caterpillar-320'
+								className='flex-1 px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+							/>
+							<button
+								type='button'
+								onClick={handleGenerateSlug}
+								className='px-3 py-2 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors whitespace-nowrap'
+							>
+								Из названия
+							</button>
+						</div>
+						{errors.slug && (
+							<p className='mt-1 text-xs text-red-500'>
+								{errors.slug.message}
+							</p>
+						)}
+					</div>
+					<div>
+						<label className='block text-sm font-medium text-stone-700 mb-1'>
+							Категория <span className='text-red-500'>*</span>
 						</label>
 						<select
 							{...register('categoryId')}
@@ -114,9 +152,15 @@ export default function EquipmentForm({
 							</p>
 						)}
 					</div>
+					<Input
+						label='Краткое описание'
+						placeholder='Мощный гусеничный экскаватор для земляных работ'
+						{...register('shortDescription')}
+						error={errors.shortDescription?.message}
+					/>
 					<div>
 						<label className='block text-sm font-medium text-stone-700 mb-1'>
-							Описание *
+							Описание <span className='text-red-500'>*</span>
 						</label>
 						<textarea
 							{...register('description')}
@@ -130,34 +174,82 @@ export default function EquipmentForm({
 							</p>
 						)}
 					</div>
+					<div>
+						<label className='block text-sm font-medium text-stone-700 mb-1'>
+							Изображения (URL через запятую){' '}
+							<span className='text-red-500'>*</span>
+						</label>
+						<input
+							placeholder='https://example.com/photo1.jpg, https://example.com/photo2.jpg'
+							defaultValue={
+								defaultValues?.images?.join(', ') ?? ''
+							}
+							onChange={e => {
+								const urls = e.target.value
+									.split(',')
+									.map(s => s.trim())
+									.filter(Boolean)
+								setValue('images', urls, {
+									shouldValidate: true
+								})
+							}}
+							className='w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+						/>
+						{errors.images && (
+							<p className='mt-1 text-xs text-red-500'>
+								{errors.images.message ??
+									errors.images.root?.message}
+							</p>
+						)}
+					</div>
 				</div>
 			</div>
 
 			<div className='bg-white rounded-xl border border-stone-200 overflow-hidden'>
 				<div className='px-5 py-4 border-b border-stone-100'>
-					<h3 className='font-semibold text-stone-900'>Цены</h3>
+					<h3 className='font-semibold text-stone-900'>
+						Цены и условия
+					</h3>
 				</div>
-				<div className='px-5 py-4 grid grid-cols-1 sm:grid-cols-3 gap-4'>
+				<div className='px-5 py-4 space-y-4'>
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+						<Input
+							label='Цена/час (₽)'
+							type='number'
+							min={0}
+							{...register('pricePerHour')}
+							error={errors.pricePerHour?.message}
+						/>
+						<Input
+							label='Цена/день (₽)'
+							type='number'
+							min={0}
+							{...register('pricePerDay')}
+							required
+							error={errors.pricePerDay?.message}
+						/>
+						<Input
+							label='Цена/неделю (₽)'
+							type='number'
+							min={0}
+							{...register('pricePerWeek')}
+							error={errors.pricePerWeek?.message}
+						/>
+						<Input
+							label='Цена/месяц (₽)'
+							type='number'
+							min={0}
+							{...register('pricePerMonth')}
+							error={errors.pricePerMonth?.message}
+						/>
+					</div>
 					<Input
-						label='Цена/день (₽) *'
+						label='Минимальное время аренды (часов)'
 						type='number'
-						min={0}
-						{...register('pricePerDay')}
-						error={errors.pricePerDay?.message}
-					/>
-					<Input
-						label='Цена/неделю (₽)'
-						type='number'
-						min={0}
-						{...register('pricePerWeek')}
-						error={errors.pricePerWeek?.message}
-					/>
-					<Input
-						label='Цена/месяц (₽)'
-						type='number'
-						min={0}
-						{...register('pricePerMonth')}
-						error={errors.pricePerMonth?.message}
+						min={1}
+						max={72}
+						{...register('minRentHours')}
+						error={errors.minRentHours?.message}
 					/>
 				</div>
 			</div>
@@ -165,7 +257,7 @@ export default function EquipmentForm({
 			<div className='bg-white rounded-xl border border-stone-200 overflow-hidden'>
 				<div className='px-5 py-4 border-b border-stone-100'>
 					<h3 className='font-semibold text-stone-900'>
-						Характеристики
+						Характеристики и местоположение
 					</h3>
 				</div>
 				<div className='px-5 py-4 grid grid-cols-1 sm:grid-cols-2 gap-4'>
@@ -189,6 +281,22 @@ export default function EquipmentForm({
 						label='Местонахождение'
 						placeholder='г. Москва, склад №1'
 						{...register('location')}
+						required
+						error={errors.location?.message}
+					/>
+					<Input
+						label='Широта'
+						type='number'
+						step='0.0001'
+						placeholder='55.7558'
+						{...register('latitude')}
+					/>
+					<Input
+						label='Долгота'
+						type='number'
+						step='0.0001'
+						placeholder='37.6173'
+						{...register('longitude')}
 					/>
 					<div>
 						<label className='block text-sm font-medium text-stone-700 mb-1'>

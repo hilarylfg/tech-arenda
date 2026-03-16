@@ -162,13 +162,12 @@ export default async function OrderDetailPage({
 								<div className='text-right shrink-0'>
 									<p className='font-semibold text-stone-900'>
 										{formatPrice(
-											item.price * item.quantity
+											Number(item.price) * item.quantity
 										)}
-										/день
 									</p>
 									{item.quantity > 1 && (
 										<p className='text-xs text-stone-400'>
-											{item.quantity} ед. ×{' '}
+											{item.quantity} дн. ×{' '}
 											{formatPrice(item.price)}
 										</p>
 									)}

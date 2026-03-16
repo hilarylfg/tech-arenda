@@ -229,17 +229,21 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
 							</h2>
 
 							<div className='space-y-3 mb-6'>
-								<div className='flex justify-between items-center py-2 border-b border-stone-100'>
-									<div className='flex items-center gap-2 text-stone-600'>
-										<Clock className='h-4 w-4 text-stone-400' />
-										<span className='text-sm'>В час</span>
+								{equipment.pricePerHour != null && (
+									<div className='flex justify-between items-center py-2 border-b border-stone-100'>
+										<div className='flex items-center gap-2 text-stone-600'>
+											<Clock className='h-4 w-4 text-stone-400' />
+											<span className='text-sm'>
+												В час
+											</span>
+										</div>
+										<span className='font-semibold text-stone-900'>
+											{formatPrice(
+												Number(equipment.pricePerHour)
+											)}
+										</span>
 									</div>
-									<span className='font-semibold text-stone-900'>
-										{formatPrice(
-											Number(equipment.pricePerHour)
-										)}
-									</span>
-								</div>
+								)}
 
 								<div className='flex justify-between items-center py-2 border-b border-stone-100'>
 									<div className='flex items-center gap-2 text-stone-600'>
@@ -279,17 +283,31 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
 								)}
 							</div>
 
-							<div className='text-xs text-stone-400 mb-4 flex items-center gap-1'>
-								<Clock className='h-3 w-3' />
-								Минимальное время аренды:{' '}
-								{equipment.minRentHours} ч.
-							</div>
+							{equipment.minRentHours != null &&
+								equipment.minRentHours > 0 && (
+									<div className='text-xs text-stone-400 mb-4 flex items-center gap-1'>
+										<Clock className='h-3 w-3' />
+										Минимальное время аренды:{' '}
+										{equipment.minRentHours} ч.
+									</div>
+								)}
 
 							{/* Форма заказа или CTA */}
 							{isAvailable ? (
 								session ? (
 									<OrderForm
-										equipment={equipment}
+										equipment={{
+											id: equipment.id,
+											pricePerDay: Number(
+												equipment.pricePerDay
+											),
+											pricePerWeek:
+												equipment.pricePerWeek != null
+													? Number(
+															equipment.pricePerWeek
+														)
+													: null
+										}}
 										userId={session.id}
 									/>
 								) : (

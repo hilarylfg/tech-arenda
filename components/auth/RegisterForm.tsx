@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useSession } from '@/lib/session-context'
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, UserPlus } from 'lucide-react'
@@ -12,6 +13,7 @@ import { useForm } from 'react-hook-form'
 
 export function RegisterForm() {
 	const router = useRouter()
+	const { refresh } = useSession()
 	const [showPassword, setShowPassword] = useState(false)
 	const [showConfirm, setShowConfirm] = useState(false)
 	const [serverError, setServerError] = useState<string>('')
@@ -58,6 +60,7 @@ export function RegisterForm() {
 				return
 			}
 
+			await refresh()
 			router.push('/dashboard')
 			router.refresh()
 		} catch {

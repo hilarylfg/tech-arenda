@@ -2,14 +2,20 @@
 
 import { Button } from '@/components/ui/button'
 import { calculateDays, calculateRentalCost, formatPrice } from '@/lib/utils'
-import type { Equipment } from '@prisma/client'
 import { Calculator, Calendar } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
+/** Сериализованные поля оборудования (Decimal → number) для передачи в Client Component */
+export interface SerializedEquipmentForOrder {
+	id: string
+	pricePerDay: number
+	pricePerWeek: number | null
+}
+
 interface OrderFormProps {
-	equipment: Equipment
+	equipment: SerializedEquipmentForOrder
 	userId: string
 }
 

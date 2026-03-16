@@ -28,7 +28,8 @@ export const createEquipmentSchema = z.object({
 	pricePerHour: z.coerce
 		.number()
 		.positive('Цена должна быть положительной')
-		.max(999999, 'Цена слишком высокая'),
+		.max(999999, 'Цена слишком высокая')
+		.optional(),
 	pricePerDay: z.coerce
 		.number()
 		.positive('Цена должна быть положительной')
@@ -38,8 +39,16 @@ export const createEquipmentSchema = z.object({
 		.positive('Цена должна быть положительной')
 		.max(999999)
 		.optional(),
+	pricePerMonth: z.coerce
+		.number()
+		.positive('Цена должна быть положительной')
+		.max(999999)
+		.optional(),
 	minRentHours: z.coerce.number().int().min(1).max(72).default(4),
-	specifications: z.record(z.string()).default({}),
+	specifications: z.record(z.string(), z.string()).default({}),
+	manufacturer: z.string().max(200).optional(),
+	model: z.string().max(200).optional(),
+	year: z.coerce.number().int().min(1980).max(2030).optional(),
 	location: z.string().min(5, 'Введите адрес местонахождения'),
 	latitude: z.coerce.number().optional(),
 	longitude: z.coerce.number().optional(),
@@ -80,11 +89,11 @@ export const catalogFiltersSchema = z.object({
 		.enum(['AVAILABLE', 'RENTED', 'MAINTENANCE', 'UNAVAILABLE'])
 		.optional(),
 	minPrice: z.preprocess(
-		(val) => (val === undefined || val === '' ? undefined : Number(val)),
+		val => (val === undefined || val === '' ? undefined : Number(val)),
 		z.number().optional()
 	),
 	maxPrice: z.preprocess(
-		(val) => (val === undefined || val === '' ? undefined : Number(val)),
+		val => (val === undefined || val === '' ? undefined : Number(val)),
 		z.number().optional()
 	),
 	search: z.string().optional(),
@@ -92,11 +101,11 @@ export const catalogFiltersSchema = z.object({
 		.enum(['priceAsc', 'priceDesc', 'nameAsc', 'nameDesc'])
 		.default('nameAsc'),
 	page: z.preprocess(
-		(val) => (val === undefined || val === '' ? 1 : Number(val)),
+		val => (val === undefined || val === '' ? 1 : Number(val)),
 		z.number().int().min(1).default(1)
 	),
 	pageSize: z.preprocess(
-		(val) => (val === undefined || val === '' ? 12 : Number(val)),
+		val => (val === undefined || val === '' ? 12 : Number(val)),
 		z.number().int().min(1).max(50).default(12)
 	)
 })

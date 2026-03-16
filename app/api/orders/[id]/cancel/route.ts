@@ -40,12 +40,12 @@ export async function POST(
 			)
 		}
 
-		// Можно отменить только заявки в статусе PENDING
-		if (order.status !== 'PENDING') {
+		// Можно отменить только заявки в статусе PENDING или CONFIRMED
+		if (order.status !== 'PENDING' && order.status !== 'CONFIRMED') {
 			return NextResponse.json(
 				{
 					success: false,
-					error: 'Можно отменить только заявки в статусе «На рассмотрении»'
+					error: 'Можно отменить только заявки в статусе «На рассмотрении» или «Подтверждено»'
 				},
 				{ status: 400 }
 			)

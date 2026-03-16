@@ -12,11 +12,11 @@ enum UserRole {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  phone     String?  @unique
-  password  String
-  role      UserRole @default(CLIENT)
+  id       String   @id @default(cuid())
+  email    String   @unique
+  phone    String?  @unique
+  password String
+  role     UserRole @default(CLIENT)
 
   firstName   String  @map("first_name")
   lastName    String  @map("last_name")
@@ -55,14 +55,18 @@ model Equipment {
   id         String @id @default(cuid())
   categoryId String @map("category_id")
 
-  name        String
-  slug        String  @unique
-  description String  @db.Text
+  name             String
+  slug             String  @unique
+  description      String  @db.Text
+  shortDescription String? @map("short_description") @db.VarChar(300)
 
   images        String[]
+  pricePerHour  Decimal? @map("price_per_hour") @db.Decimal(10, 2)
   pricePerDay   Decimal  @map("price_per_day") @db.Decimal(10, 2)
   pricePerWeek  Decimal? @map("price_per_week") @db.Decimal(10, 2)
   pricePerMonth Decimal? @map("price_per_month") @db.Decimal(10, 2)
+
+  minRentHours Int @default(4) @map("min_rent_hours")
 
   specifications Json @default("{}")
 
@@ -70,6 +74,8 @@ model Equipment {
   model        String?
   year         Int?
   location     String?
+  latitude     Float?
+  longitude    Float?
 
   status EquipmentStatus @default(AVAILABLE)
 

@@ -1,7 +1,5 @@
 import { RegisterForm } from '@/components/auth/RegisterForm'
-import { Truck } from 'lucide-react'
 import type { Metadata } from 'next'
-import Link from 'next/link'
 
 export const metadata: Metadata = {
 	title: 'Регистрация',

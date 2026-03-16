@@ -23,11 +23,22 @@ export default async function EditEquipmentPage({
 
 	const defaultValues = {
 		name: equipment.name,
+		slug: equipment.slug,
 		description: equipment.description,
+		shortDescription: equipment.shortDescription ?? undefined,
 		categoryId: equipment.categoryId,
-		pricePerDay: equipment.pricePerDay,
-		pricePerWeek: equipment.pricePerWeek ?? undefined,
-		pricePerMonth: equipment.pricePerMonth ?? undefined,
+		images: equipment.images,
+		pricePerHour: equipment.pricePerHour
+			? Number(equipment.pricePerHour)
+			: undefined,
+		pricePerDay: Number(equipment.pricePerDay),
+		pricePerWeek: equipment.pricePerWeek
+			? Number(equipment.pricePerWeek)
+			: undefined,
+		pricePerMonth: equipment.pricePerMonth
+			? Number(equipment.pricePerMonth)
+			: undefined,
+		minRentHours: equipment.minRentHours,
 		status: equipment.status as
 			| 'AVAILABLE'
 			| 'RENTED'
@@ -37,7 +48,8 @@ export default async function EditEquipmentPage({
 		model: equipment.model ?? undefined,
 		year: equipment.year ?? undefined,
 		location: equipment.location ?? undefined,
-		images: equipment.images
+		latitude: equipment.latitude ?? undefined,
+		longitude: equipment.longitude ?? undefined
 	}
 
 	return (

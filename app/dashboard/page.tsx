@@ -16,6 +16,11 @@ export default async function DashboardPage() {
 	const session = await getSession()
 	if (!session?.id) redirect('/login')
 
+	const user = await prisma.user.findUnique({
+		where: { id: session.id },
+		select: { firstName: true }
+	})
+
 	const [orders, counts] = await Promise.all([
 		prisma.order.findMany({
 			where: { userId: session.id },
@@ -67,6 +72,18 @@ export default async function DashboardPage() {
 
 	return (
 		<div className='space-y-6'>
+			{/* Приветствие */}
+			<div>
+				<h1 className='text-2xl font-bold text-stone-900'>
+					Добро пожаловать
+					{user?.firstName ? `, ${user.firstName}` : ''}!
+				</h1>
+				<p className='text-stone-500 mt-1'>
+					Здесь вы можете отслеживать свои заявки и управлять арендой
+					техники
+				</p>
+			</div>
+
 			{/* Статистика */}
 			<div className='grid grid-cols-2 lg:grid-cols-4 gap-4'>
 				{stats.map(stat => (
@@ -141,7 +158,7 @@ export default async function DashboardPage() {
 												)}
 											</p>
 											<p className='text-sm text-stone-500 mt-0.5'>
-												{formatDate(order.startDate)}{' '}
+												{formatDate(order.startDate)} —{' '}
 												{formatDate(order.endDate)}
 											</p>
 										</div>
@@ -172,7 +189,7 @@ export default async function DashboardPage() {
 			</div>
 
 			{/* CTA */}
-			<div className='bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-6 text-white'>
+			<div className='bg-linear-to-br from-amber-500 to-amber-600 rounded-xl p-6 text-white'>
 				<h3 className='text-lg font-semibold mb-1'>Нужна техника?</h3>
 				<p className='text-amber-100 text-sm mb-4'>
 					Более 50 единиц спецтехники доступны прямо сейчас

@@ -6,7 +6,14 @@ import { EquipmentCardSkeleton } from '@/components/ui/skeleton'
 import { formatPrice } from '@/lib/utils'
 import { EQUIPMENT_STATUS_LABELS } from '@/types'
 import type { Category } from '@prisma/client'
-import { ChevronLeft, ChevronRight, Grid3X3, List, Search } from 'lucide-react'
+import {
+	ChevronLeft,
+	ChevronRight,
+	Grid3X3,
+	List,
+	MapPin,
+	Search
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
@@ -171,14 +178,16 @@ export function CatalogClient({
 						))}
 					</div>
 				) : result?.equipment.length === 0 ? (
-					<div className='text-center py-16'>
-						<Search className='h-12 w-12 text-stone-300 mx-auto mb-4' />
+					<div className='text-center py-20'>
+						<div className='inline-flex p-4 rounded-full bg-stone-100 mb-4'>
+							<Search className='h-10 w-10 text-stone-400' />
+						</div>
 						<h3 className='text-lg font-semibold text-stone-700 mb-2'>
 							Ничего не найдено
 						</h3>
-						<p className='text-stone-500 mb-4'>
-							Попробуйте изменить условия поиска или сбросить
-							фильтры
+						<p className='text-stone-500 mb-6 max-w-sm mx-auto'>
+							По вашему запросу нет подходящей техники. Попробуйте
+							изменить условия фильтрации.
 						</p>
 						<Button
 							variant='outline'
@@ -192,7 +201,7 @@ export function CatalogClient({
 								})
 							}
 						>
-							Сбросить фильтры
+							Сбросить все фильтры
 						</Button>
 					</div>
 				) : (
@@ -240,8 +249,16 @@ export function CatalogClient({
 												{eq.name}
 											</h3>
 											{eq.shortDescription && (
-												<p className='text-xs text-stone-500 line-clamp-2 mb-3'>
+												<p className='text-xs text-stone-500 line-clamp-2 mb-2'>
 													{eq.shortDescription}
+												</p>
+											)}
+											{eq.location && (
+												<p className='text-xs text-stone-400 flex items-center gap-1 mb-3'>
+													<MapPin className='h-3 w-3 shrink-0' />
+													<span className='truncate'>
+														{eq.location}
+													</span>
 												</p>
 											)}
 											<div className='flex items-center justify-between'>

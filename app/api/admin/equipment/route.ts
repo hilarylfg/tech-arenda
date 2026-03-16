@@ -86,13 +86,13 @@ export async function POST(req: NextRequest) {
 			)
 		}
 
+		const { categoryId, specifications, ...rest } = validated.data
+
 		const equipment = await prisma.equipment.create({
 			data: {
-				...validated.data,
-				specifications: validated.data.specifications as Record<
-					string,
-					string
-				>
+				...rest,
+				category: { connect: { id: categoryId } },
+				specifications: (specifications ?? {}) as Record<string, string>
 			},
 			include: { category: true }
 		})

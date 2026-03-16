@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useSession } from '@/lib/session-context'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
@@ -13,6 +14,7 @@ import { useForm } from 'react-hook-form'
 export function LoginForm() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
+	const { refresh } = useSession()
 	const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard'
 
 	const [showPassword, setShowPassword] = useState(false)
@@ -38,6 +40,7 @@ export function LoginForm() {
 				setAuthError('Неверный email или пароль')
 				return
 			}
+			await refresh()
 			router.push(callbackUrl)
 			router.refresh()
 		} catch {
