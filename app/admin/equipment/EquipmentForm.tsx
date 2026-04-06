@@ -10,7 +10,8 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
 
-type FormData = z.infer<typeof createEquipmentSchema>
+type FormValues = z.input<typeof createEquipmentSchema>
+type FormData = z.output<typeof createEquipmentSchema>
 
 interface Category {
 	id: string
@@ -19,7 +20,7 @@ interface Category {
 
 interface EquipmentFormProps {
 	categories: Category[]
-	defaultValues?: Partial<FormData>
+	defaultValues?: Partial<FormValues>
 	equipmentId?: string
 }
 
@@ -45,7 +46,7 @@ export default function EquipmentForm({
 		setValue,
 		watch,
 		formState: { errors, isSubmitting }
-	} = useForm<FormData>({
+	} = useForm<FormValues, unknown, FormData>({
 		resolver: zodResolver(createEquipmentSchema),
 		defaultValues: defaultValues ?? {
 			status: 'AVAILABLE',
@@ -79,8 +80,8 @@ export default function EquipmentForm({
 			if (!res.ok) throw new Error(json.error ?? 'Ошибка сохранения')
 			router.push('/admin/equipment')
 			router.refresh()
-		} catch (e: any) {
-			setError(e.message)
+		} catch (e: unknown) {
+			setError(e instanceof Error ? e.message : 'Ошибка сохранения')
 		}
 	}
 

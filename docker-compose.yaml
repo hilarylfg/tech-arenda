@@ -1,0 +1,48 @@
+services:
+  db:
+    container_name: app_db
+    image: postgres:15.3
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    networks:
+      - app_network
+  app:
+    container_name: app
+    image: oven/bun:1
+    working_dir: /app
+    restart: always
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      AUTH_SECRET: ${AUTH_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "bun install && bunx --bun prisma generate && if [ -d prisma/migrations ] && [ \"$(ls -A prisma/migrations 2>/dev/null)\" ]; then bunx --bun prisma migrate deploy; else bunx --bun prisma db push; fi && bun prisma/seed.ts && bun next build && bun next start -p 3000"
+    volumes:
+      - ./:/app
+      - app_node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+  app_node_modules:
+
+networks:
+  app_network:

@@ -53,7 +53,16 @@ export async function POST(req: NextRequest) {
 		const response = NextResponse.json({ success: true })
 		setSessionCookie(response, token)
 		return response
-	} catch {
+	} catch (error) {
+		console.error('[auth/login] POST failed:', error)
+
+		if (error instanceof Error && error.message.includes('AUTH_SECRET')) {
+			return NextResponse.json(
+				{ success: false, error: 'Ошибка конфигурации сервера' },
+				{ status: 500 }
+			)
+		}
+
 		return NextResponse.json(
 			{ success: false, error: 'Внутренняя ошибка сервера' },
 			{ status: 500 }
