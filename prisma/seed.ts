@@ -91,7 +91,7 @@ async function main() {
 				year: 2021,
 				location: 'г. Москва, склад №1',
 				images: [
-					'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=800'
+					'https://www.zeppelin.ru/upload/iblock/e34/uhx3c9g91j0glu01lqmyn6qb41i91fq3.jpg'
 				],
 				specifications: {
 					Вес: '20 000 кг',
@@ -118,7 +118,7 @@ async function main() {
 				year: 2020,
 				location: 'г. Москва, склад №2',
 				images: [
-					'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'
+					'https://www.gruzovik.com/img/xxl/8163/Komatsu-PW-160-11-4500-Hr-FULL-SPEC-MACHINE-Niderlandy_8163_4208239257141.jpg'
 				],
 				specifications: {
 					Вес: '16 500 кг',
@@ -145,7 +145,7 @@ async function main() {
 				year: 2022,
 				location: 'г. Москва, склад №1',
 				images: [
-					'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800'
+					'https://nsk.jcbskl.ru/upload/iblock/2f6/2f6803ce3d29ecabedc9ae33c6576a87.jpeg'
 				],
 				specifications: {
 					Вес: '2 600 кг',
@@ -173,7 +173,7 @@ async function main() {
 				year: 2019,
 				location: 'г. Москва, склад №3',
 				images: [
-					'https://images.unsplash.com/photo-1590644365607-47c3b4b68a5b?w=800'
+					'https://www.bashkransnab.ru/upload/iblock/d08/d0866ade18c2ced730edbde337e2beec.jpg'
 				],
 				specifications: {
 					Грузоподъёмность: '100 т',
@@ -199,9 +199,7 @@ async function main() {
 				model: 'ATF 70G',
 				year: 2020,
 				location: 'г. Москва, склад №3',
-				images: [
-					'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800'
-				],
+				images: ['https://raise.ru/pics/market/33434.jpg'],
 				specifications: {
 					Грузоподъёмность: '70 т',
 					'Длина стрелы': '50 м',
@@ -227,7 +225,7 @@ async function main() {
 				year: 2021,
 				location: 'г. Москва, склад №2',
 				images: [
-					'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'
+					'https://www.bossmachinery.nl/data/images/vehicles/l_02_Volvo%20L90H%20-%20BM4399_29_1_2.jpeg'
 				],
 				specifications: {
 					Грузоподъёмность: '5 200 кг',
@@ -254,7 +252,7 @@ async function main() {
 				year: 2022,
 				location: 'г. Москва, склад №1',
 				images: [
-					'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=800'
+					'https://views.manitou-group.com/tessa/main_visual_construction_telehandler_mt_1840_easy_st5_manitou.png/no-locale?channel=web150jpg'
 				],
 				specifications: {
 					Грузоподъёмность: '4 000 кг',
@@ -281,7 +279,7 @@ async function main() {
 				year: 2020,
 				location: 'г. Москва, склад №2',
 				images: [
-					'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800'
+					'https://dcs-rent.ru/wp-content/uploads/2022/11/Komatsu-D65EX-16.jpg'
 				],
 				specifications: {
 					Вес: '21 815 кг',
@@ -309,7 +307,7 @@ async function main() {
 				year: 2019,
 				location: 'г. Москва, склад №3',
 				images: [
-					'https://images.unsplash.com/photo-1590644365607-47c3b4b68a5b?w=800'
+					'https://dcs-rent.ru/wp-content/uploads/2016/08/asfaltoukladchik-vogele-super-1800-2.jpg'
 				],
 				specifications: {
 					'Ширина укладки': '2,55–9,0 м',
@@ -335,7 +333,7 @@ async function main() {
 				year: 2021,
 				location: 'г. Москва, склад №3',
 				images: [
-					'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'
+					'https://dcs-rent.ru/wp-content/uploads/2022/07/Hamm-HD-110.jpg'
 				],
 				specifications: {
 					'Рабочая ширина': '1 680 мм',
